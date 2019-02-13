@@ -45,7 +45,7 @@ class SignListener(val m: DreamReparar) : Listener {
                             p.world.spawnParticle(Particle.VILLAGER_ANGRY, l, 100, 1.5, 1.0, 1.0)
                             return
                         }
-                        
+
                         if (durability == 0) {
                             p.sendMessage("§8[§d§lReparar§8] §cVoc\u00ea §4n\u00e3o precisa§c reparar isto!")
                             p.world.spawnParticle(Particle.VILLAGER_ANGRY, l, 100, 1.5, 1.0, 1.0)
