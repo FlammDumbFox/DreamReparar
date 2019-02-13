@@ -31,63 +31,65 @@ class DreamReparar : KotlinPlugin(), Listener {
 
 	fun programarPlaca() {
 		scheduler().schedule(this) {
-			for (p in Bukkit.getOnlinePlayers()) {
-				try {
-					val targetBlock = p.getTargetBlock(null as HashSet<Material>?, 5)
-					if (targetBlock.type !== Material.SIGN && targetBlock.type !== Material.WALL_SIGN || !(targetBlock.state as Sign).getLine(0).equals("§1[Reparar]")) {
-						continue
-					}
+			while (true) {
+				for (p in Bukkit.getOnlinePlayers()) {
+					try {
+						val targetBlock = p.getTargetBlock(null as HashSet<Material>?, 5)
+						if ((targetBlock.type != Material.SIGN && targetBlock.type != Material.WALL_SIGN) || (targetBlock.state as Sign).getLine(0) != "§1[Reparar]") {
+							continue
+						}
 
-					if (p.inventory.itemInMainHand != null && p.inventory.itemInMainHand.type != Material.AIR) {
-						val itemReparar = p.inventory.itemInMainHand
+						if (p.inventory.itemInMainHand != null && p.inventory.itemInMainHand.type != Material.AIR) {
+							val itemReparar = p.inventory.itemInMainHand
 
-						val meta = itemReparar.itemMeta
+							val meta = itemReparar.itemMeta
 
-						if (meta is Damageable) {
-							val durability = meta.damage
+							if (meta is Damageable) {
+								val durability = meta.damage
 
-							if (durability != 0) {
-								val lines = (targetBlock.state as Sign).getLines()
-								lines[1] = "Grana:"
-								lines[2] = "${calculatePrice(itemReparar, p)}$"
-								var desconto = ""
-								if (p.hasPermission("dreamreparar.vip")) {
-									desconto = "10% OFF"
+								if (durability != 0) {
+									val lines = (targetBlock.state as Sign).lines
+									lines[1] = "Grana:"
+									lines[2] = "${calculatePrice(itemReparar, p)}$"
+									var desconto = ""
+									if (p.hasPermission("dreamreparar.vip")) {
+										desconto = "10% OFF"
+									}
+									if (p.hasPermission("dreamreparar.vip+")) {
+										desconto = "20% OFF"
+									}
+									if (p.hasPermission("dreamreparar.vip++")) {
+										desconto = "30% OFF"
+									}
+									lines[3] = Math.round(calculatePercentage(itemReparar, true)).toString() + "% " + desconto
+									p.sendSignChange(targetBlock.location, lines)
+								} else {
+									val lines = (targetBlock.state as Sign).lines
+									lines[1] = "Não é"
+									lines[2] = "necessário"
+									lines[3] = "reparar isto!"
+									p.sendSignChange(targetBlock.location, lines)
 								}
-								if (p.hasPermission("dreamreparar.vip+")) {
-									desconto = "20% OFF"
-								}
-								if (p.hasPermission("dreamreparar.vip++")) {
-									desconto = "30% OFF"
-								}
-								lines[3] = Math.round(calculatePercentage(itemReparar, true)).toString() + "% " + desconto
-								p.sendSignChange(targetBlock.location, lines)
 							} else {
-								val lines = (targetBlock.state as Sign).getLines()
+								val lines = (targetBlock.state as Sign).lines
 								lines[1] = "Não é"
-								lines[2] = "necessário"
+								lines[2] = "possível"
 								lines[3] = "reparar isto!"
 								p.sendSignChange(targetBlock.location, lines)
 							}
 						} else {
-							val lines = (targetBlock.state as Sign).getLines()
-							lines[1] = "Não é"
-							lines[2] = "possível"
-							lines[3] = "reparar isto!"
-							p.sendSignChange(targetBlock.location, lines)
+							val lines2 = (targetBlock.state as Sign).lines
+							lines2[1] = "Você não pode"
+							lines2[2] = "reparar a sua"
+							lines2[3] = "mão!"
+							p.sendSignChange(targetBlock.location, lines2)
 						}
-					} else {
-						val lines2 = (targetBlock.state as Sign).getLines()
-						lines2[1] = "Você não pode"
-						lines2[2] = "reparar a sua"
-						lines2[3] = "mão!"
-						p.sendSignChange(targetBlock.location, lines2)
+					} catch (ex: IllegalStateException) {
 					}
-				} catch (ex: IllegalStateException) {
 				}
-			}
 
-			waitFor(20)
+				waitFor(20)
+			}
 		}
 	}
 
