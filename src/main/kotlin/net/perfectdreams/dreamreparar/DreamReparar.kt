@@ -131,13 +131,13 @@ class DreamReparar : KotlinPlugin(), Listener {
 		}
 		var desconto = false
 		if (p.hasPermission("dreamreparar.vip") && !desconto) {
-			basePrice *= 0.3f
+			basePrice *= 0.9f
 			desconto = true
 		} else if (p.hasPermission("dreamreparar.vip+") && !desconto) {
-			basePrice *= 0.2f
+			basePrice *= 0.8f
 			desconto = true
 		} else if (p.hasPermission("dreamreparar.vip++") && !desconto) {
-			basePrice *= 0.1f
+			basePrice *= 0.7f
 			desconto = true
 		}
 		return Math.round(price * basePrice).toFloat()
